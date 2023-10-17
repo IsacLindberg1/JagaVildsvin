@@ -14,6 +14,8 @@ var stopBtn;			// Referens till stoppknappen
 var pigImgs;
 var pigElem;
 var timerRefPig = null;
+var pigHits = 0;
+var numberOfPigs = 0;
 
 // ------------------------------
 // Initiera globala variabler och koppla funktion till knapp
@@ -67,18 +69,23 @@ function startGame() {
 	carElem.src = "img/" + carImgs[carDir];
 	moveCar();
 	/* === Tillägg i uppgiften === */
-	pigElem.style.top = "0px";
-	pigElem.style.left = "0px";
-	timeRefPig = setTimeout(pigSpawnIn, 1000);
+	pigHits = 0;
+	numberOfPigs = 0;
+	document.getElementById("hitCounter").innerHTML = pigHits;
+	document.getElementById("pigNr").innerHTML = numberOfPigs;
+	
+	timeRefPig = setTimeout(pigSpawnIn, 2000);
 
 } // End startGame
 // ------------------------------
 // Stoppa spelet
 function stopGame() {
 	if (timerRef != null) clearTimeout(timerRef);
+	
 	startBtn.disabled = false;
 	stopBtn.disabled = true;
 	/* === Tillägg i uppgiften === */	
+	if (timerRefPig != null) clearTimeout(timerRefPig);
 	pigElem.style.visibility = "hidden";
 
 } // End stopGame
@@ -111,24 +118,44 @@ function moveCar() {
 	carElem.style.top = y + "px";
 	timerRef = setTimeout(moveCar,timerStep);
 	/* === Tillägg i uppgiften === */
+	collision();
 
 } // End moveCar
 // ------------------------------
 /* === Tillägg av nya funktioner i uppgiften === */
 function pigSpawnIn(){
-	pigElem.src = "./img/pig.png";
-	
+	numberOfPigs++;
+
+	if(numberOfPigs === 10){
+		stopGame();
+	}
+
+	pigElem.src = "img/pig.png";
 	let xLimitPig = boardElem.offsetWidth - pigElem.offsetWidth;
 	let yLimitPig = boardElem.offsetHeight - pigElem.offsetHeight;
-	let pigCordinatesX = Math.floor(Math.random() * xLimitPig);
-	let pigCordinatesY = Math.floor(Math.random() * yLimitPig);
-
-	pigElem.style.top =  pigCordinatesX + "px";
-	pigElem.style.left =  pigCordinatesY + "px";
-
-	pigElem.style.visibility = "visible";
+	let pigXCoordinates = Math.floor(Math.random() * xLimitPig);
+	let pigYCoordinates = Math.floor(Math.random() * yLimitPig);
 
 	timeRefPig = setTimeout(pigSpawnIn, 5000);
+	console.log(timeRefPig);
+
+	pigElem.style.top = pigYCoordinates + "px";
+	pigElem.style.left = pigXCoordinates + "px";
+	pigElem.style.visibility = "visible";
+
+	document.getElementById("hitCounter").innerHTML = pigHits;
+	document.getElementById("pigNr").innerHTML = numberOfPigs;	
 }
 
-
+function collision(x, y, pigXCoordinates, pigYCoordinates){
+	if(x === pigXCoordinates && y === pigYCoordinates){
+		pigElem.src = "img/smack.png";
+		console.log("Träff!");
+		pigHits++;
+		console.log(pigHits);
+	}
+	/*if(x > pigXCoordinates - 60 && x < pigXCoordinates + 30 && y > pigYCoordinates - 60 && y < pigYCoordinates + 30 ){
+		console.log("Krock!");
+		pigHits++;
+	}*/
+}
