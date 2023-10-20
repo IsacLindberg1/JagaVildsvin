@@ -118,7 +118,7 @@ function moveCar() {
 	carElem.style.top = y + "px";
 	timerRef = setTimeout(moveCar,timerStep);
 	/* === Tillägg i uppgiften === */
-	collision();
+	collision(x, y);
 
 } // End moveCar
 // ------------------------------
@@ -136,19 +136,21 @@ function pigSpawnIn(){
 	let pigXCoordinates = Math.floor(Math.random() * xLimitPig);
 	let pigYCoordinates = Math.floor(Math.random() * yLimitPig);
 
-	timeRefPig = setTimeout(pigSpawnIn, 5000);
-	console.log(timeRefPig);
-
 	pigElem.style.top = pigYCoordinates + "px";
 	pigElem.style.left = pigXCoordinates + "px";
 	pigElem.style.visibility = "visible";
 
+	timeRefPig = setTimeout(pigSpawnIn, 5000);
+	console.log(timeRefPig);
+
 	document.getElementById("hitCounter").innerHTML = pigHits;
 	document.getElementById("pigNr").innerHTML = numberOfPigs;	
+
+	collision(pigXCoordinates, pigYCoordinates);
 }
 
 function collision(x, y, pigXCoordinates, pigYCoordinates){
-	if(x === pigXCoordinates && y === pigYCoordinates){
+	if(x > pigXCoordinates - 60 && x < pigXCoordinates + 30 && y > pigYCoordinates - 60 && y < pigYCoordinates + 30){
 		pigElem.src = "img/smack.png";
 		console.log("Träff!");
 		pigHits++;
